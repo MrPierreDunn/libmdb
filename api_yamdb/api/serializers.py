@@ -7,6 +7,8 @@ from reviews.validators import validate_correct_username, validate_username
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания объекта класса User."""
+
     username = serializers.CharField(
         max_length=150,
         required=True,
@@ -24,11 +26,10 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        required=True)
-    confirmation_code = serializers.CharField(
-        required=True
-    )
+    """Сериализатор для объекта класса User при получении токена JWT."""
+
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
     class Meta:
         model = User
@@ -36,6 +37,8 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Category."""
+
     class Meta:
         model = Category
         fields = ('name', 'slug')
@@ -43,6 +46,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Genre."""
+
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -50,6 +55,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class AbstractTitleSerializer(serializers.ModelSerializer):
+    """Абстрактная модель сериализатора."""
+
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -61,11 +68,15 @@ class AbstractTitleSerializer(serializers.ModelSerializer):
 
 
 class ReadTitleSerializer(AbstractTitleSerializer):
+    """Сериализатор объектов класса Title при GET запросах."""
+
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
 
 
 class WriteTitleSerializer(AbstractTitleSerializer):
+    """Сериализатор объектов класса Title при небезопасных запросах."""
+
     genre = serializers.SlugRelatedField(
         slug_field='slug', many=True, queryset=Genre.objects.all()
     )
@@ -78,6 +89,8 @@ class WriteTitleSerializer(AbstractTitleSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Review."""
+
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -100,6 +113,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializers(serializers.ModelSerializer):
+    """Сериализатор объектов класса Comment."""
+
     author = serializers.SlugRelatedField(
         slug_field='username', read_only=True,
         default=serializers.CurrentUserDefault()
@@ -112,6 +127,7 @@ class CommentSerializers(serializers.ModelSerializer):
 
 
 class UsersSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели User."""
 
     class Meta:
         model = User
@@ -122,6 +138,7 @@ class UsersSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели профиля."""
 
     class Meta:
         model = User
