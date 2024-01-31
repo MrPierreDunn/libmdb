@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 from api.filters import TitleFilter
@@ -9,6 +10,16 @@ from api.serializers import (CategorySerializer, GenreSerializer,
                              ReadTitleSerializer, WriteTitleSerializer)
 from api.viewsets import ListCreateDelViewSet
 from reviews.models import Category, Genre, Title
+
+
+class APISignup(APIView):
+
+    pass
+
+
+class APIToken(APIView):
+
+    pass
 
 
 class CategoryViewSet(ListCreateDelViewSet):
@@ -36,3 +47,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if request.method == 'PUT':
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
+
+
+class UsersViewSet(viewsets.ModelViewSet):
+    pass
