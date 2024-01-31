@@ -1,67 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from reviews.validators import (validate_correct_username, validate_username,
-                                validate_year)
-
-USER = 'user'
-MODERATOR = 'moderator'
-ADMIN = 'admin'
-
-
-USER_ROLES = (
-    (USER, USER),
-    (MODERATOR, MODERATOR),
-    (ADMIN, ADMIN),
-)
-
-
-class User(AbstractUser):
-    username = models.CharField(
-        verbose_name='Никнэйм пользователя',
-        validators=[validate_correct_username, validate_username],
-        max_length=150,
-        unique=True,
-        blank=False,
-        null=False
-    )
-    first_name = models.CharField(
-        verbose_name='Имя пользователя',
-        max_length=150,
-        blank=True
-    )
-    last_name = models.CharField(
-        verbose_name='Фамилия пользователя',
-        max_length=150,
-        blank=True
-    )
-    email = models.EmailField(
-        verbose_name='Почта пользователя',
-        max_length=254,
-        unique=True,
-        blank=False,
-        null=False
-    )
-    role = models.CharField(
-        verbose_name='Пользовательская роль',
-        max_length=16,
-        choices=USER_ROLES,
-        default='user',
-        blank=True
-    )
-    bio = models.TextField(
-        verbose_name='Биография пользователя',
-        blank=True
-    )
-
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
-
-    def __str__(self):
-        return self.username
+from reviews.validators import (validate_year)
+from users.models import User
 
 
 class Category(models.Model):
