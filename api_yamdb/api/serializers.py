@@ -7,36 +7,6 @@ from users.models import User
 from reviews.validators import validate_correct_username, validate_username
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания объекта класса User."""
-
-    username = serializers.CharField(
-        max_length=150,
-        required=True,
-        validators=[validate_correct_username, validate_username]
-    )
-    email = serializers.EmailField(
-        required=True,
-        max_length=254
-    )
-
-    class Meta:
-        model = User
-        lookup_field = 'username'
-        fields = ('email', 'username')
-
-
-class TokenSerializer(serializers.ModelSerializer):
-    """Сериализатор для объекта класса User при получении токена JWT."""
-
-    username = serializers.CharField(required=True)
-    confirmation_code = serializers.CharField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'confirmation_code')
-
-
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
@@ -126,25 +96,3 @@ class CommentSerializers(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'pub_date')
         read_only_fields = ('author', )
 
-
-class UsersSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели User."""
-
-    class Meta:
-        model = User
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
-        lookup_field = 'username'
-
-
-class UserMeSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели профиля."""
-
-    class Meta:
-        model = User
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
-        lookup_field = 'username'
-        read_only_fields = ('role',)

@@ -15,16 +15,6 @@ from api.viewsets import ListCreateDelViewSet
 from reviews.models import Category, Genre, Title, Review
 
 
-class APISignup(APIView):
-
-    pass
-
-
-class APIToken(APIView):
-
-    pass
-
-
 class CategoryViewSet(ListCreateDelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -50,10 +40,6 @@ class TitleViewSet(viewsets.ModelViewSet):
         if request.method == 'PUT':
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
-
-
-class UsersViewSet(viewsets.ModelViewSet):
-    pass
 
 
 class CommentViewSet(viewsets.ModelViewSet):
