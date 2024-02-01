@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from api.views import (CategoryViewSet, GenreViewSet,
-                       TitleViewSet, UsersViewSet)
+                       TitleViewSet)
 
 app_name = 'api'
 
@@ -21,11 +21,6 @@ router.register(
     'titles',
     TitleViewSet,
     basename='titles'
-)
-router.register(
-    'users',
-    UsersViewSet,
-    basename='users'
 )
 
 
