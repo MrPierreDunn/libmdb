@@ -1,8 +1,8 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from api.views import (APISignup, APIToken, CategoryViewSet, GenreViewSet,
-                       TitleViewSet, UsersViewSet)
+from api.views import (CategoryViewSet, GenreViewSet,
+                       TitleViewSet)
 
 app_name = 'api'
 
@@ -22,15 +22,8 @@ router.register(
     TitleViewSet,
     basename='titles'
 )
-router.register(
-    'users',
-    UsersViewSet,
-    basename='users'
-)
 
 
 urlpatterns = [
-    path('v1/auth/signup/', APISignup.as_view(), name='signup'),
-    path('v1/auth/token/', APIToken.as_view(), name='token'),
     path('v1/', include(router.urls)),
 ]
