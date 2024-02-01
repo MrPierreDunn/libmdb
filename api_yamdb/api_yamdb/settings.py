@@ -118,9 +118,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = "/tmp/app-messages"
-
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
@@ -135,3 +132,4 @@ SIMPLE_JWT = {
 # Настройки для почты
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = "/tmp/app-messages"
+ADMIN_EMAIL = "test@example.com"
