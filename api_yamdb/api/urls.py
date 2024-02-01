@@ -4,6 +4,8 @@ from rest_framework import routers
 from api.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                        ReviewViewSet, TitleViewSet)
 
+from users.v1.views import (send_confirmation_code, send_token)
+
 app_name = 'api'
 
 v1_router = routers.DefaultRouter()
@@ -35,5 +37,7 @@ v1_router.register(
 
 
 urlpatterns = [
-    path('v1/', include(v1_router.urls)),
+    path('v1/', include(router.urls)),
+    path('v1/auth/signup/', send_confirmation_code),
+    path('v1/auth/token/', send_token),
 ]

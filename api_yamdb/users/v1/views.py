@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
-from users.v1.permissions import IsAdmin
+from users.v1.permission import IsAdmin
 from users.models import User
 from users.v1.serializers import (MeSerializer,
                                   TokenSerializer, UserSerializer)
@@ -17,7 +17,7 @@ from users.v1.serializers import (MeSerializer,
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def send_confirmation_code(request):
-    """Отправляем код подтверждения."""
+    """Вью функция для получения кода подтверждения."""
     serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
