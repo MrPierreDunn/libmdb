@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 
-from users.v1.views import send_confirmation_code, send_token, UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +25,5 @@ urlpatterns = [
         'redoc/',
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
-    ),
-    path('v1/auth/signup/', send_confirmation_code),
-    path('v1/auth/token/', send_token),
+    )
 ]

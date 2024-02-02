@@ -72,6 +72,7 @@ def send_token(request):
     )
 
 
+@permission_classes([IsAuthenticated])
 class UserViewSet(viewsets.ModelViewSet):
     """Вью-класс для пользователей."""
 
@@ -98,3 +99,13 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.data)
+
+    def create(self, request):
+        if request.method == 'POST':
+            serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

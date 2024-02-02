@@ -4,7 +4,7 @@ from rest_framework import routers
 from api.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                        ReviewViewSet, TitleViewSet)
 
-from users.v1.views import (send_confirmation_code, send_token)
+from users.v1.views import (send_confirmation_code, send_token, UserViewSet)
 
 app_name = 'api'
 
@@ -34,6 +34,10 @@ v1_router.register(
     CommentViewSet,
     basename='comments'
 )
+v1_router.register(
+    'users',
+    UserViewSet,
+    basename='users')
 
 
 urlpatterns = [

@@ -1,10 +1,11 @@
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from django.core.validators import EmailValidator, RegexValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from reviews.validators import validate_correct_username, validate_username
+# from reviews.validators import validate_correct_username, validate_username
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -96,3 +97,75 @@ class CommentSerializers(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'pub_date')
         read_only_fields = ('author', )
 
+
+
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для пользователей."""
+
+    class Meta:
+        """Мета класс пользователя."""
+
+        fields = (
+            'bio',
+            'email',
+            'first_name',
+            'last_name',
+            'role',
+            'username'
+        )
+        model = User
+        validators = [
+            EmailValidator,
+            RegexValidator(
+                regex=r'^[\w.@+-]',
+                message='Недопустимый никнейм',
+            )
+        ]
+
+    def validate_username(self, value):
+        """Валидация имени пользователя."""
+
+        name = value.lower()
+        if name == 'me':
+            raise ValidationError('Имя пользователя "me" запрещено.')
+        return value
+
+    def validate_email(self, value):
+
+        if len(value) > 254:
+            raise ValidationError("Email не должен быть длиннее 254 символов.")
+        return value
+
+
+class TokenSerializer(serializers.Serializer):
+    """Сериализатор для токена."""
+
+    username = serializers.CharField(max_length=150, required=True)
+
+    class Meta:
+        """Мета класс токена."""
+
+        fields = '__all__'
+        model = User
+
+
+class MeSerializer(serializers.ModelSerializer):
+    """Сериализатор пользователя."""
+
+    role = serializers.CharField(read_only=True)
+
+    class Meta:
+        """Мета класс пользователя."""
+
+        model = User
+        fields = (
+            'bio',
+            'email',
+            'first_name',
+            'last_name',
+            'role',
+            'username'
+        )

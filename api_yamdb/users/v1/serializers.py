@@ -28,12 +28,35 @@ class UserSerializer(serializers.ModelSerializer):
             )
         ]
 
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        user.save
+        return user
+
     def validate_username(self, value):
         """Валидация имени пользователя."""
 
         name = value.lower()
         if name == 'me':
             raise ValidationError('Имя пользователя "me" запрещено.')
+        return value
+
+    def validate_email(self, value):
+
+        if len(value) > 254:
+            raise ValidationError("Email не должен быть длиннее 254 символов.")
+        return value
+
+    def validate_first_name(self, value):
+
+        if len(value) > 150:
+            raise ValidationError("Email не должен быть длиннее 150 символов.")
+        return value
+
+    def validate_last_name(self, value):
+
+        if len(value) > 150:
+            raise ValidationError("Email не должен быть длиннее 150 символов.")
         return value
 
 
@@ -66,3 +89,21 @@ class MeSerializer(serializers.ModelSerializer):
             'role',
             'username'
         )
+
+    def validate_email(self, value):
+
+        if len(value) > 254:
+            raise ValidationError("Email не должен быть длиннее 254 символов.")
+        return value
+
+    def validate_first_name(self, value):
+
+        if len(value) > 150:
+            raise ValidationError("Email не должен быть длиннее 150 символов.")
+        return value
+
+    def validate_last_name(self, value):
+
+        if len(value) > 150:
+            raise ValidationError("Email не должен быть длиннее 150 символов.")
+        return value
