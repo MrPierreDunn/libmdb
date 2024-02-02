@@ -1,8 +1,31 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, RegexValidator
 from rest_framework import serializers
+import re
 
 from users.models import User
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор для валидации полей username и email."""
+
+    email = serializers.EmailField(max_length=254, required=True)
+    username = serializers.CharField(max_length=150, required=True)
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя "me" не разрешено.'
+            )
+        if not re.match(r'^[\w.@+-]+\Z', value):
+            raise serializers.ValidationError(
+                'Имя пользователя "me" не разрешено.'
+            )
+        return value
+
+    class Meta:
+        model = User
+        fields = ('username', 'email',)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,38 +36,13 @@ class UserSerializer(serializers.ModelSerializer):
 
         fields = (
             'bio',
-            'email',
             'first_name',
             'last_name',
             'role',
+            'email',
             'username'
         )
         model = User
-        validators = [
-            EmailValidator,
-            RegexValidator(
-                regex=r'^[\w.@+-]+',
-                message='Недопустимый никнейм',
-            )
-        ]
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        user.save
-        return user
-
-    def validate_username(self, value):
-        """Валидация имени пользователя."""
-
-        if value == 'me':
-            raise ValidationError('Имя пользователя "me" запрещено.')
-        return value
-
-    def validate_email(self, value):
-
-        if len(value) > 254:
-            raise ValidationError("Email не должен быть длиннее 254 символов.")
-        return value
 
     def validate_first_name(self, value):
 

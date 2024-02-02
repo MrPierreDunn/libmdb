@@ -11,7 +11,7 @@ from rest_framework import filters, mixins
 
 from users.v1.permission import IsAdmin
 from users.models import User
-from users.v1.serializers import (MeSerializer,
+from users.v1.serializers import (UserCreateSerializer,
                                   TokenSerializer, UserSerializer)
 
 
@@ -19,7 +19,7 @@ from users.v1.serializers import (MeSerializer,
 @permission_classes([AllowAny])
 def send_confirmation_code(request):
     """Вью функция для получения кода подтверждения."""
-    serializer = UserSerializer(data=request.data)
+    serializer = UserCreateSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
@@ -27,10 +27,6 @@ def send_confirmation_code(request):
         email=email,
         username=username
     )
-    if not created:
-        user.email = email
-        user.username = username
-        user.save()
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         'Код подтверждения',
