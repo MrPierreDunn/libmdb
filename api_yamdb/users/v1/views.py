@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework import filters, mixins
+from django.db import IntegrityError
 
 from users.v1.permission import IsAdmin
 from users.models import User
@@ -24,10 +25,17 @@ def send_confirmation_code(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
-    user, created = User.objects.get_or_create(
-        email=email,
-        username=username
-    )
+    try:
+        user, create = User.objects.get_or_create(
+            username=username,
+            email=email
+        )
+    except IntegrityError:
+    # https://djangodoc.ru/3.2/ref/exceptions/#django.db.IntegrityError
+        return Response(
+            'Такой логин или email уже существуют',
+            status=status.HTTP_400_BAD_REQUEST
+        )
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         'Код подтверждения',
