@@ -19,6 +19,7 @@ from users.v1.serializers import (UserCreateSerializer,
 @permission_classes([AllowAny])
 def send_confirmation_code(request):
     """Вью функция для получения кода подтверждения."""
+
     serializer = UserCreateSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
