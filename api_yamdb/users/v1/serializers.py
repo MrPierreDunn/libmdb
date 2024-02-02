@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         validators = [
             EmailValidator,
             RegexValidator(
-                regex=r'^[\w.@+-]',
+                regex=r'^[\w.@+-]+',
                 message='Недопустимый никнейм',
             )
         ]
@@ -36,8 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         """Валидация имени пользователя."""
 
-        name = value.lower()
-        if name == 'me':
+        if value == 'me':
             raise ValidationError('Имя пользователя "me" запрещено.')
         return value
 
