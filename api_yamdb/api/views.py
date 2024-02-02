@@ -3,16 +3,15 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 from api.filters import TitleFilter
-from api.permission import AdminAnonPermission, IsOwnerOrReadOnly
+from api.permission import AdminAnonPermission, IsOwnerOrAdminOrModerator
 from api.serializers import (CategorySerializer, CommentSerializers,
                              GenreSerializer, ReadTitleSerializer,
                              ReviewSerializer, WriteTitleSerializer)
 from api.viewsets import ListCreateDelViewSet
-from reviews.models import Category, Genre, Title, Review
+from reviews.models import Category, Genre, Title, Review, Comment
 
 
 class CategoryViewSet(ListCreateDelViewSet):
@@ -43,24 +42,40 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    model = CommentSerializers
-    permission_classes = (IsOwnerOrReadOnly,)
+    """Представление для комментариев."""
+    model = Comment
+    serializer_class = CommentSerializers
+    permission_classes = (IsOwnerOrAdminOrModerator,)
 
-    def get_post(self):
+    def get_comment(self):
         return get_object_or_404(Review, pk=self.kwargs['review_id'])
 
     def perform_create(self, serializer):
-        post = self.get_post()
-        serializer.save(author=self.request.user, post=post)
+        comment = self.get_comment()
+        serializer.save(author=self.request.user, review=comment)
 
     def get_queryset(self):
-        post = self.get_post()
-        return post.comments.all()
+        comment = self.get_comment()
+        return comment.comments.all()
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """Представление для отзывов и оценки."""
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = (IsOwnerOrAdminOrModerator,)
 
     def perform_create(self, serializer):
         title_id = self.kwargs['title_id']
@@ -73,8 +88,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
             raise ValidationError('Вы уже оставляли отзыв этому произведению')
         serializer.save(title=title, author=author)
 
-    def perform_update(self, serializer):
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
+        return Response(serializer.data)
 
-    def perform_destroy(self, instance):
-        instance.delete()
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
