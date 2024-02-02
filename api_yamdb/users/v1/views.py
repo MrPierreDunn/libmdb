@@ -7,6 +7,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework import filters, mixins
 
 from users.v1.permission import IsAdmin
 from users.models import User
@@ -54,7 +55,6 @@ def send_token(request):
         User,
         username=serializer.validated_data['username']
     )
-
     confirmation_code = request.data.get('confirmation_code')
     refresh = RefreshToken.for_user(user)
 
@@ -72,40 +72,56 @@ def send_token(request):
     )
 
 
-@permission_classes([IsAuthenticated])
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     """Вью-класс для пользователей."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (filters.SearchFilter,)
     search_fields = ('username', )
     permission_classes = (IsAdmin,)
-    lookup_field = 'username'
 
     @action(
-        methods=['GET', 'PATCH'],
         detail=False,
-        permission_classes=[IsAuthenticated, ]
+        methods=['get', 'patch', 'delete'],
+        url_path=r'(?P<username>[\w.@+-]+)',
+        url_name='get_user'
     )
-    def user(self, request):
-        """Получение или обновление пользователя."""
-        user = get_object_or_404(User, username=self.request.user)
-        serializer = MeSerializer(self.request.user)
-
+    def get_user_by_username(self, request, username):
+        user = get_object_or_404(User, username=username)
         if request.method == 'PATCH':
-            serializer = MeSerializer(user, data=request.data, partial=True)
+            serializer = UserSerializer(
+                user, data=request.data, partial=True
+            )
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.data)
+        elif request.method == 'DELETE':
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request):
-        if request.method == 'POST':
-            serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    @action(
+        detail=False,
+        methods=['get', 'patch'],
+        url_path='me',
+        url_name='me',
+        permission_classes=(IsAuthenticated,)
+    )
+    def get_me_data(self, request):
+        if request.method == 'PATCH':
+            serializer = UserSerializer(
+                request.user,
+                data=request.data,
+                partial=True,
+                context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(role=request.user.role)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
