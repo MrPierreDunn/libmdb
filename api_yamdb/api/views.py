@@ -1,17 +1,15 @@
-from django.forms import ValidationError
-from django.shortcuts import get_object_or_404
-from django.db.models import Avg
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-
-
 from api.filters import TitleFilter
 from api.permission import AdminAnonPermission, IsOwnerOrAdminOrModerator
 from api.serializers import (CategorySerializer, CommentSerializers,
                              GenreSerializer, ReadTitleSerializer,
                              ReviewSerializer, WriteTitleSerializer)
 from api.viewsets import ListCreateDelViewSet
-from reviews.models import Category, Genre, Title, Review, Comment
+from django.db.models import Avg
+from django.forms import ValidationError
+from django.shortcuts import get_object_or_404
+from rest_framework import status, viewsets
+from rest_framework.response import Response
+from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class CategoryViewSet(ListCreateDelViewSet):

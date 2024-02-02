@@ -1,19 +1,17 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
-from rest_framework import filters, mixins
-from django.db import IntegrityError
-
-from users.v1.permission import IsAdmin
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from users.models import User
-from users.v1.serializers import (UserCreateSerializer,
-                                  TokenSerializer, UserSerializer)
+from users.v1.permission import IsAdmin
+from users.v1.serializers import (TokenSerializer, UserCreateSerializer,
+                                  UserSerializer)
 
 
 @api_view(['POST'])
@@ -31,7 +29,7 @@ def send_confirmation_code(request):
             email=email
         )
     except IntegrityError:
-    # https://djangodoc.ru/3.2/ref/exceptions/#django.db.IntegrityError
+        # https://djangodoc.ru/3.2/ref/exceptions/#django.db.IntegrityError
         return Response(
             'Такой логин или email уже существуют',
             status=status.HTTP_400_BAD_REQUEST
