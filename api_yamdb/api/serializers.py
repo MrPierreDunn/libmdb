@@ -31,7 +31,7 @@ class AbstractTitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = (
             'id', 'name', 'year', 'rating', 'description',
-            'genre', 'category'
+            'genre', 'category',
         )
 
 
@@ -40,6 +40,9 @@ class ReadTitleSerializer(AbstractTitleSerializer):
 
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
+
+    class Meta(AbstractTitleSerializer.Meta):
+        pass
 
 
 class WriteTitleSerializer(AbstractTitleSerializer):
@@ -51,6 +54,9 @@ class WriteTitleSerializer(AbstractTitleSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Category.objects.all()
     )
+
+    class Meta(AbstractTitleSerializer.Meta):
+        pass
 
     def to_representation(self, instance):
         return ReadTitleSerializer(instance).data

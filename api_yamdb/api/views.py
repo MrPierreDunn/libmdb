@@ -1,9 +1,9 @@
 from api.filters import TitleFilter
-from api.permission import AdminAnonPermission, IsOwnerOrAdminOrModerator
+from api.permission import AdminOrReadOnly, IsOwnerOrAdminOrModerator
 from api.serializers import (CategorySerializer, CommentSerializers,
                              GenreSerializer, ReadTitleSerializer,
                              ReviewSerializer, WriteTitleSerializer)
-from api.viewsets import ListCreateDelViewSet
+from api.viewsets import CategoryGenreViewSet
 from django.db.models import Avg
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
@@ -12,31 +12,31 @@ from rest_framework.response import Response
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
-class CategoryViewSet(ListCreateDelViewSet):
+class CategoryViewSet(CategoryGenreViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(ListCreateDelViewSet):
+class GenreViewSet(CategoryGenreViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.select_related('category').\
-        prefetch_related('genre').annotate(rating=Avg('reviews__score'))
-    permission_classes = (AdminAnonPermission, )
+    queryset = (
+        Title.objects
+        .select_related('category')
+        .prefetch_related('genre')
+        .annotate(rating=Avg('reviews__score'))
+    )
+    permission_classes = (AdminOrReadOnly, )
     filterset_class = TitleFilter
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return ReadTitleSerializer
         return WriteTitleSerializer
-
-    def update(self, request, *args, **kwargs):
-        if request.method == 'PUT':
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        return super().update(request, *args, **kwargs)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
