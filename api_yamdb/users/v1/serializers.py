@@ -15,17 +15,6 @@ class UserCreateSerializer(serializers.Serializer):
 
     email = serializers.EmailField(max_length=254, required=True)
     username = serializers.CharField(max_length=150, required=True)
-
-    # def validate_username(self, value):
-    #     if value == 'me':
-    #         raise serializers.ValidationError(
-    #             'Имя пользователя "me" не разрешено.'
-    #         )
-    #     if not re.match(r'^[\w.@+-]+\Z', value):
-    #         raise serializers.ValidationError(
-    #             'Имя пользователя "me" не разрешено.'
-    #         )
-    #     return value
     
     def create(self, validated_data):
         try:
