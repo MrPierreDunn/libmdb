@@ -1,6 +1,6 @@
 from django.forms import ValidationError
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
@@ -62,6 +62,7 @@ class WriteTitleSerializer(AbstractTitleSerializer):
         return ReadTitleSerializer(instance).data
 
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Review."""
 
@@ -76,10 +77,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context['request']
+        if request.method != 'POST':
+            return data
         title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Title, pk=title_id)
-        if (request.method == 'POST' and Review.objects.filter(
-                author=request.user, title=title).exists()):
+        if Review.objects.filter(
+            author=request.user,
+            title_id=title_id
+        ).exists():
             raise ValidationError(
                 'Нельзя сделать 2 отзыва на одно произведение!'
             )
@@ -91,10 +95,8 @@ class CommentSerializers(serializers.ModelSerializer):
 
     author = serializers.SlugRelatedField(
         slug_field='username', read_only=True,
-        default=serializers.CurrentUserDefault()
     )
 
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
-        read_only_fields = ('author', )
