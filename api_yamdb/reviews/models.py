@@ -4,6 +4,8 @@ from django.db import models
 from reviews.validators import (validate_year)
 from users.models import User
 
+TEXT_LIMIT = 50
+
 
 class Category(models.Model):
     name = models.CharField(max_length=256)
@@ -61,13 +63,11 @@ class Review(models.Model):
         Title,
         on_delete=models.CASCADE,
         verbose_name='Произведение',
-        related_name='reviews'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
-        related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         default=1,
@@ -88,6 +88,7 @@ class Review(models.Model):
                 name='unique_author_title'
             )
         ]
+        default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ('-pub_date',)
@@ -102,14 +103,11 @@ class Comment(models.Model):
         Review,
         on_delete=models.CASCADE,
         verbose_name='Комментарии',
-        related_name='comments'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор комментария',
-        related_name='comments',
-        null=True
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации комментария',
@@ -117,9 +115,10 @@ class Comment(models.Model):
     )
 
     class Meta:
+        default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.text
+        return self.text[:TEXT_LIMIT]
