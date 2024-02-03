@@ -1,6 +1,29 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
+from django.core.exceptions import ValidationError
+import re
+
+from users.constsans import (
+    MAX_EMAIL_LENGTH, MAX_FIRST_NAME_LENGTH, MAX_LAST_NAME_LENGTH,
+    MAX_USERNAME_LENGTH, MAX_ROLE_LENGTH
+)
+
+
+def validate_username_uniqueness(value):
+    if User.objects.filter(username=value).exists():
+        raise ValidationError(
+            ('Пользователь с таким username уже существует.'),
+            params={'value': value},
+        )
+    if value == 'me':
+        raise ValidationError(
+            'Имя пользователя "me" не разрешено.'
+        )
+    if not re.match(r'^[\w.@+-]+\Z', value):
+        raise ValidationError(
+            'Недопустимые символы :'
+        )
 
 
 class User(AbstractUser):
@@ -9,41 +32,50 @@ class User(AbstractUser):
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
+    STAFF = 'staff'
+    SUPERUSER = 'superuser'
     USER_ROLE = [
         ('user', USER),
         ('admin', ADMIN),
         ('moderator', MODERATOR),
+        ('staff', STAFF),
+        ('superuser', SUPERUSER)
     ]
 
     username = models.CharField(
-        max_length=150,
+        max_length=MAX_USERNAME_LENGTH,
         unique=True,
-        blank=False,
-        null=False,
-        validators=[RegexValidator(
-            regex=r'^[\w.@+-]+$',
-            message='Имя пользователя содержит недопустимый символ'
-        )]
+        validators=[validate_username_uniqueness]
     )
     email = models.EmailField(
         'E-mail',
-        max_length=254,
+        max_length=MAX_EMAIL_LENGTH,
         unique=True
     )
-    first_name = models.TextField('Имя', max_length=150, blank=True)
-    last_name = models.TextField('Фамилия', max_length=150, blank=True)
+    first_name = models.TextField(
+        'Имя',
+        max_length=MAX_FIRST_NAME_LENGTH,
+        blank=True
+    )
+    last_name = models.TextField(
+        'Фамилия',
+        max_length=MAX_LAST_NAME_LENGTH,
+        blank=True
+    )
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
-        'Роль пользователя', max_length=30, choices=USER_ROLE, default='user'
+        'Роль пользователя',
+        max_length=MAX_ROLE_LENGTH,
+        choices=USER_ROLE,
+        default='user'
     )
 
-    @property
-    def is_user(self):
-        return self.role == self.USER
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN
+        return self.role == self.ADMIN and self.SUPERUSER and self.STAFF
 
     @property
     def is_moderator(self):
@@ -53,4 +85,5 @@ class User(AbstractUser):
 
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
+        ordering = ('username', 'role',)
+
