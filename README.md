@@ -172,6 +172,6 @@ http://127.0.0.1:8000/api/v1/users/me/
 ```
 
 Авторы:
-[mrDuglas42](https://github.com/mrDuglas42)
-[MrPierreDunn](https://github.com/MrPierreDunn)
-[kavnsk54](https://github.com/kavnsk54)
+-[mrDuglas42](https://github.com/mrDuglas42)
+-[MrPierreDunn](https://github.com/MrPierreDunn)
+-[kavnsk54](https://github.com/kavnsk54)
