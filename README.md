@@ -84,7 +84,7 @@ python3 manage.py runserver
 ```
 Для пользователей Windows:
 ```
-python3 manage.py runserver 
+python manage.py runserver 
 ```
 
 
