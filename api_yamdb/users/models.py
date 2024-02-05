@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
 import re
@@ -22,7 +21,7 @@ def validate_username_uniqueness(value):
         )
     if not re.match(r'^[\w.@+-]+\Z', value):
         raise ValidationError(
-            'Недопустимые символы :'
+            'Недопустимые символы :', re.sub(r'[\w.@+-]+', '', value)
         )
 
 
@@ -75,7 +74,7 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN and self.SUPERUSER and self.STAFF
+        return self.role == self.ADMIN or self.is_superuser or self.is_staff
 
     @property
     def is_moderator(self):
@@ -86,4 +85,3 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username', 'role',)
-

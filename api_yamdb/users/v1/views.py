@@ -1,6 +1,4 @@
 from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
@@ -57,7 +55,6 @@ class UserViewSet(mixins.ListModelMixin,
     search_fields = ('username', )
     permission_classes = (IsAdmin,)
     lookup_field = 'username'
-    # http_method_names = ["get", "post", "put", "patch", "delete", "head", "options", "trace"]
 
     @action(
         detail=False,
@@ -77,5 +74,5 @@ class UserViewSet(mixins.ListModelMixin,
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = UserSerializer(request.user)
+        serializer = MeSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)

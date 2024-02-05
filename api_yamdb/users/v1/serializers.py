@@ -1,10 +1,10 @@
-from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.db import IntegrityError
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import serializers
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.db import IntegrityError
 import re
 
 from users.models import User
@@ -15,10 +15,22 @@ class UserCreateSerializer(serializers.Serializer):
 
     email = serializers.EmailField(max_length=254, required=True)
     username = serializers.CharField(max_length=150, required=True)
-    
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя "me" не разрешено.'
+            )
+        if not re.match(r'^[\w.@+-]+\Z', value):
+            symbols = list(re.sub(r'[\w.@+-]+', '', value))
+            raise ValidationError(
+                f'Недопустимые символы : {symbols}'
+            )
+        return value
+
     def create(self, validated_data):
         try:
-            user = User.objects.create_user(**validated_data)
+            user, created = User.objects.get_or_create(**validated_data)
             confirmation_code = default_token_generator.make_token(user)
             send_mail(
                 'Код подтверждения',
@@ -70,10 +82,10 @@ class TokenSerializer(serializers.Serializer):
         return data
 
 
-class MeSerializer(UserCreateSerializer):
+class MeSerializer(UserSerializer):
     """Сериализатор пользователя."""
 
-    class Meta(UserCreateSerializer.Meta):
+    class Meta(UserSerializer.Meta):
         """Мета класс пользователя."""
 
         read_only_fields = ['role']
