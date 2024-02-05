@@ -62,7 +62,6 @@ class WriteTitleSerializer(AbstractTitleSerializer):
         return ReadTitleSerializer(instance).data
 
 
-
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Review."""
 

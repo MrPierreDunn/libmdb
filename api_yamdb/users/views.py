@@ -1,17 +1,14 @@
-from django.conf import settings
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework import filters, mixins
 
-from users.v1.permission import IsAdmin
 from users.models import User
-from users.v1.serializers import (
-    UserCreateSerializer, TokenSerializer, UserSerializer, MeSerializer
-)
+from users.permission import IsAdmin
+from users.serializers import (MeSerializer, TokenSerializer,
+                               UserCreateSerializer, UserSerializer)
 
 
 @api_view(['POST'])

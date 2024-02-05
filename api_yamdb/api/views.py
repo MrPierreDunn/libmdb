@@ -1,8 +1,6 @@
-from django.shortcuts import get_object_or_404
 from django.db.models import Avg
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 
 from api.filters import TitleFilter
 from api.permission import AdminOrReadOnly, IsOwnerOrAdminOrModerator
@@ -10,7 +8,7 @@ from api.serializers import (CategorySerializer, CommentSerializers,
                              GenreSerializer, ReadTitleSerializer,
                              ReviewSerializer, WriteTitleSerializer)
 from api.viewsets import CategoryGenreViewSet
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class CategoryViewSet(CategoryGenreViewSet):

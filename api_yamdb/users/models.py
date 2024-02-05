@@ -1,12 +1,12 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.core.exceptions import ValidationError
 import re
 
-from users.constsans import (
-    MAX_EMAIL_LENGTH, MAX_FIRST_NAME_LENGTH, MAX_LAST_NAME_LENGTH,
-    MAX_USERNAME_LENGTH, MAX_ROLE_LENGTH
-)
+from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.db import models
+
+from users.constsans import (MAX_EMAIL_LENGTH, MAX_FIRST_NAME_LENGTH,
+                             MAX_LAST_NAME_LENGTH, MAX_ROLE_LENGTH,
+                             MAX_USERNAME_LENGTH)
 
 
 def validate_username_uniqueness(value):

@@ -1,11 +1,12 @@
-from django.core.exceptions import ValidationError
-from django.contrib.auth.tokens import default_token_generator
-from rest_framework import serializers
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.db import IntegrityError
 import re
+
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 
 from users.models import User
 
