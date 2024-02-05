@@ -128,3 +128,4 @@ class UserViewSet(mixins.ListModelMixin,
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+

@@ -12,3 +12,4 @@ def send_confirmation_code(email, confirmation_code):
         recipient_list=(email,),
         fail_silently=False,
     )
+

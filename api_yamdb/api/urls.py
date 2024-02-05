@@ -37,9 +37,22 @@ v1_router.register(
     UserViewSet,
     basename='users')
 
+auth_urls = [
+    path(
+        'signup/',
+        send_confirmation_code,
+        name='signup'
+    ),
+    path(
+        'token/',
+        send_token,
+        name='token'
+    )
+]
+
 
 urlpatterns = [
     path('v1/', include(v1_router.urls)),
-    path('v1/auth/signup/', send_confirmation_code),
-    path('v1/auth/token/', send_token),
+    path('v1/auth/', include(auth_urls)),
 ]
+

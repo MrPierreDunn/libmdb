@@ -1,5 +1,5 @@
-import os
 from datetime import timedelta
+from pathlib import Path
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,6 +132,6 @@ SIMPLE_JWT = {
 
 # Настройки для почты
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'email_messages')
+EMAIL_FILE_PATH = BASE_DIR / 'email_messages'
 ADMIN_EMAIL = "webmaster@localhost"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"

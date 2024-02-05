@@ -1,9 +1,11 @@
-from django.contrib.admin import ModelAdmin, register
+from django.contrib.admin import register
+from django.contrib.auth.admin import UserAdmin
+
 from users.models import User
 
 
 @register(User)
-class UserAdmin(ModelAdmin):
+class UserAdmin(UserAdmin):
     """Пользователь админка."""
 
     list_display = ('email', 'username', 'role')

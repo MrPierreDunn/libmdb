@@ -16,10 +16,10 @@
 ## Авторизация и пермишены
 
 Алгоритм регистрации пользователей
-1 Пользователь отправляет POST-запрос на добавление нового пользователя с параметрами email и username на эндпоинт /api/v1/auth/signup/.
-2 YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email.
-3 Пользователь отправляет POST-запрос с параметрами username и confirmation_code на эндпоинт /api/v1/auth/token/, в ответе на запрос ему приходит token (JWT-токен).
-4 При желании пользователь отправляет PATCH-запрос на эндпоинт /api/v1/users/me/ и заполняет поля в своём профайле (описание полей — в документации).
+1. Пользователь отправляет POST-запрос на добавление нового пользователя с параметрами email и username на эндпоинт /api/v1/auth/signup/.
+2. YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email.
+3. Пользователь отправляет POST-запрос с параметрами username и confirmation_code на эндпоинт /api/v1/auth/token/, в ответе на запрос ему приходит token (JWT-токен). 
+4. При желании пользователь отправляет PATCH-запрос на эндпоинт /api/v1/users/me/ и заполняет поля в своём профайле (описание полей — в документации). 
 
 Пользовательские роли
 - Аноним — может просматривать описания произведений, читать отзывы и комментарии.
@@ -70,6 +70,13 @@ pip install -r requirements.txt
 python3 manage.py migrate
 ```
 
+Выполнить импорт CSV:
+
+```
+python3 manage.py fill_db_from_csv.py
+```
+
+
 Запустить проект:
 
 ```
@@ -77,7 +84,7 @@ python3 manage.py runserver
 ```
 Для пользователей Windows:
 ```
-python3 manage.py runserver 
+python manage.py runserver 
 ```
 
 
@@ -165,6 +172,6 @@ http://127.0.0.1:8000/api/v1/users/me/
 ```
 
 Авторы:
-[mrDuglas42](https://github.com/mrDuglas42)
-[MrPierreDunn](https://github.com/MrPierreDunn)
-[kavnsk54](https://github.com/kavnsk54)
+- [mrDuglas42](https://github.com/mrDuglas42)
+- [MrPierreDunn](https://github.com/MrPierreDunn)
+- [kavnsk54](https://github.com/kavnsk54)

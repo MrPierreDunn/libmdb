@@ -103,3 +103,4 @@ class MeSerializer(serializers.ModelSerializer):
         if len(value) > 150:
             raise ValidationError("Email не должен быть длиннее 150 символов.")
         return value
+
