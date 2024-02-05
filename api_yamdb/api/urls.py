@@ -1,8 +1,9 @@
-from api.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                       ReviewViewSet, TitleViewSet)
 from django.urls import include, path
 from rest_framework import routers
-from users.v1.views import UserViewSet, send_confirmation_code, send_token
+
+from api.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
+                       ReviewViewSet, TitleViewSet)
+from users.views import UserViewSet, send_confirmation_code, send_token
 
 app_name = 'api'
 
@@ -55,4 +56,3 @@ urlpatterns = [
     path('v1/', include(v1_router.urls)),
     path('v1/auth/', include(auth_urls)),
 ]
-
