@@ -9,24 +9,21 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from users.models import User
+from users.validators import validate_username_uniqueness
+from users.constsans import (MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH)
 
 
 class UserCreateSerializer(serializers.Serializer):
     """Базовый сериализатор для валидации полей username и email."""
 
-    email = serializers.EmailField(max_length=254, required=True)
-    username = serializers.CharField(max_length=150, required=True)
+    email = serializers.EmailField(max_length=MAX_EMAIL_LENGTH, required=True)
+    username = serializers.CharField(
+        max_length=MAX_USERNAME_LENGTH,
+        required=True
+    )
 
     def validate_username(self, value):
-        if value == 'me':
-            raise serializers.ValidationError(
-                'Имя пользователя "me" не разрешено.'
-            )
-        if not re.match(r'^[\w.@+-]+\Z', value):
-            symbols = list(re.sub(r'[\w.@+-]+', '', value))
-            raise ValidationError(
-                f'Недопустимые символы : {symbols}'
-            )
+        validate_username_uniqueness(value)
         return value
 
     def create(self, validated_data):
@@ -69,7 +66,10 @@ class UserSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для токена."""
 
-    username = serializers.CharField(max_length=150, required=True)
+    username = serializers.CharField(
+        max_length=MAX_USERNAME_LENGTH,
+        required=True
+    )
     confirmation_code = serializers.CharField(write_only=True, required=True)
 
     def validate(self, data):
@@ -89,4 +89,4 @@ class MeSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         """Мета класс пользователя."""
 
-        read_only_fields = ['role']
+        read_only_fields = ('role',)
