@@ -25,7 +25,10 @@ class GenreSerializer(serializers.ModelSerializer):
 class AbstractTitleSerializer(serializers.ModelSerializer):
     """Абстрактная модель сериализатора."""
 
-    rating = serializers.IntegerField(read_only=True)
+    rating = serializers.IntegerField(
+        default=None,
+        read_only=True,
+    )
 
     class Meta:
         model = Title

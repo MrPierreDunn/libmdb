@@ -1,4 +1,3 @@
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -15,6 +14,3 @@ def validate_year(data):
         raise ValidationError(
             'Год выпуска произведения не может быть больше текущего.'
         )
-
-
-validate_username = UnicodeUsernameValidator()
