@@ -1,28 +1,10 @@
-import re
-
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.db import models
 
+from users.validators import validate_username_uniqueness
 from users.constsans import (MAX_EMAIL_LENGTH, MAX_FIRST_NAME_LENGTH,
                              MAX_LAST_NAME_LENGTH, MAX_ROLE_LENGTH,
                              MAX_USERNAME_LENGTH)
-
-
-def validate_username_uniqueness(value):
-    if User.objects.filter(username=value).exists():
-        raise ValidationError(
-            ('Пользователь с таким username уже существует.'),
-            params={'value': value},
-        )
-    if value == 'me':
-        raise ValidationError(
-            'Имя пользователя "me" не разрешено.'
-        )
-    if not re.match(r'^[\w.@+-]+\Z', value):
-        raise ValidationError(
-            'Недопустимые символы :', re.sub(r'[\w.@+-]+', '', value)
-        )
 
 
 class User(AbstractUser):
@@ -84,4 +66,4 @@ class User(AbstractUser):
 
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username', 'role',)
+        ordering = ('username',)
