@@ -1,5 +1,3 @@
-import re
-
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError

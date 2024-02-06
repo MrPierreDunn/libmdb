@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -21,7 +20,6 @@ def send_confirmation_code(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
 
 
 @api_view(['POST'])
@@ -46,7 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username', )
     permission_classes = (IsAdmin,)
-    http_method_names = ['get', 'post', 'patch', 'delete',]
+    http_method_names = ('get', 'post', 'patch', 'delete', )
     lookup_field = 'username'
 
     @action(
