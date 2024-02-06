@@ -14,14 +14,14 @@ class NameSlug(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('name',)
 
 
 class Category(NameSlug):
 
-    class Meta:
+    class Meta(NameSlug.Meta):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ('name',)
 
     def __str__(self):
         return self.slug
@@ -29,10 +29,9 @@ class Category(NameSlug):
 
 class Genre(NameSlug):
 
-    class Meta:
+    class Meta(NameSlug.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ('name',)
 
     def __str__(self):
         return self.slug
@@ -43,7 +42,7 @@ class Title(models.Model):
         verbose_name='Название',
         max_length=MAX_LENGTH_CHARFIELDS,
     )
-    year = models.IntegerField(
+    year = models.SmallIntegerField(
         verbose_name='Год выпуска',
         validators=[validate_year]
     )

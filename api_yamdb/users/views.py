@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from users.models import User
-from users.permission import IsAdmin
+from api.permission import IsAdmin
 from users.serializers import (MeSerializer, TokenSerializer,
                                UserCreateSerializer, UserSerializer)
 
@@ -17,11 +18,10 @@ def send_confirmation_code(request):
     """Вью функция для получения кода подтверждения."""
 
     serializer = UserCreateSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
@@ -38,12 +38,7 @@ def send_token(request):
     return Response(anwser, status=status.HTTP_200_OK)
 
 
-class UserViewSet(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.DestroyModelMixin,
-                  viewsets.GenericViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """Вью-класс для пользователей."""
 
     queryset = User.objects.all()
@@ -51,6 +46,7 @@ class UserViewSet(mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username', )
     permission_classes = (IsAdmin,)
+    http_method_names = ['get', 'post', 'patch', 'delete',]
     lookup_field = 'username'
 
     @action(
