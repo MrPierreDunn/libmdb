@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from api.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                        ReviewViewSet, TitleViewSet)
-from users.views import UserViewSet, send_confirmation_code, send_token
+from api.views import UserViewSet, send_confirmation_code, send_token
 
 app_name = 'api'
 
