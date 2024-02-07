@@ -13,14 +13,10 @@ class User(AbstractUser):
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
-    STAFF = 'staff'
-    SUPERUSER = 'superuser'
     USER_ROLE = [
         ('user', USER),
         ('admin', ADMIN),
-        ('moderator', MODERATOR),
-        ('staff', STAFF),
-        ('superuser', SUPERUSER)
+        ('moderator', MODERATOR)
     ]
 
     username = models.CharField(
