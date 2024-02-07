@@ -10,13 +10,12 @@ from rest_framework_simplejwt.tokens import AccessToken
 from api.filters import TitleFilter
 from api.permission import AdminOrReadOnly, IsAdmin, IsOwnerOrAdminOrModerator
 from api.serializers import (CategorySerializer, CommentSerializers,
-                             MeSerializer, GenreSerializer,
+                             GenreSerializer, MeSerializer,
                              ReadTitleSerializer, ReviewSerializer,
                              TokenSerializer, UserCreateSerializer,
                              UserSerializer, WriteTitleSerializer)
 from api.viewsets import CategoryGenreViewSet
 from reviews.models import Category, Comment, Genre, Review, Title
-
 
 User = get_user_model()
 
@@ -100,7 +99,6 @@ def send_confirmation_code(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
 
 
 @api_view(['POST'])

@@ -1,10 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from users.validators import validate_username_uniqueness
 from users.constsans import (MAX_EMAIL_LENGTH, MAX_FIRST_NAME_LENGTH,
                              MAX_LAST_NAME_LENGTH, MAX_ROLE_LENGTH,
                              MAX_USERNAME_LENGTH)
+from users.validators import validate_username_uniqueness
 
 
 class User(AbstractUser):

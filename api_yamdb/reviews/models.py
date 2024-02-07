@@ -1,10 +1,9 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from reviews.constants import MAX_LENGTH_CHARFIELDS, MAX_LENGTH_SLUGFIELDS
 from reviews.validators import validate_year
-
 
 User = get_user_model()
 

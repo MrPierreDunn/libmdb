@@ -1,17 +1,15 @@
-from django.forms import ValidationError
-from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.constsans import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH
 from users.models import User
 from users.validators import validate_username_uniqueness
-from users.constsans import (MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH)
-
-from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
